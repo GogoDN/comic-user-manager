@@ -4,6 +4,8 @@ from bcrypt import hashpw, gensalt, checkpw
 
 from uuid import uuid4
 
+from bson import ObjectId
+
 from pymongo.errors import DuplicateKeyError
 
 from ..data.adapter import MongoDbClient
@@ -17,6 +19,7 @@ class UsersService:
         return hashpw(password.encode("utf-8"), gensalt())
 
     def __find_user_by_id(self, user_id):
+        self.validate_user_id(user_id)
         return self.mongo_client.find_user_by_id(user_id)
 
     def __find_user_by_username(self, username: str):
@@ -60,3 +63,8 @@ class UsersService:
         user = self.__find_user_by_id(user_id)
 
         return self.__parse_user_response(user)
+
+    def validate_user_id(self, user_id: str):
+        if ObjectId.is_valid(user_id):
+            return
+        raise HTTPException(422, {"message": "Invalid user id"})

@@ -3,6 +3,7 @@ from fastapi import Header, HTTPException
 from typing import Union
 
 from .data.adapter import MongoDbClient
+from .services.users import UsersService
 
 
 class AuthHeaders:
@@ -19,6 +20,7 @@ class AuthHeaders:
             raise HTTPException(401)
 
         if self.x_user_id:
+            UsersService().validate_user_id(self.x_user_id)
             user = MongoDbClient().find_user_by_id(self.x_user_id)
             if user.get("token") != self.x_token:
                 raise HTTPException(401)
