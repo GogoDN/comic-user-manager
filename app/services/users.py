@@ -57,7 +57,7 @@ class UsersService:
         ):
             return
 
-        return {"token": user.get("token")}
+        return self.__parse_user_response(user)
 
     def me(self, user_id: str):
         user = self.__find_user_by_id(user_id)

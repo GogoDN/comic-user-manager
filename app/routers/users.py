@@ -35,16 +35,12 @@ class LoginIn(BaseModel):
     password: str
 
 
-class LoginOut(BaseModel):
-    token: str
-
-
 @router.post("/", response_model=CreateUserOut)
 def create(user: CreateUserIn, service: UsersService = Depends(UsersService)):
     return service.insert_user(user.dict())
 
 
-@router.post("/login", response_model=LoginOut)
+@router.post("/login", response_model=User)
 def login(user: LoginIn, service: UsersService = Depends(UsersService)):
     response = service.login(user.name, user.password)
     if not response:
